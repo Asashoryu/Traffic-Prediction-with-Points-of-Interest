@@ -1,0 +1,883 @@
+{
+  "authenticationResultCode": "ValidCredentials",
+  "brandLogoUri": "http://dev.virtualearth.net/Branding/logo_powered_by.png",
+  "copyright": "Copyright © 2023 Microsoft and its suppliers. All rights reserved. This API cannot be accessed and the content and any results may not be used, reproduced or transmitted in any manner without express written permission from Microsoft Corporation.",
+  "resourceSets": [
+    {
+      "estimatedTotal": 1,
+      "resources": [
+        {
+          "__type": "Route:http://schemas.microsoft.com/search/local/ws/rest/v1",
+          "bbox": [
+            40.828698,
+            14.165594,
+            40.858241,
+            14.191372
+          ],
+          "id": "v70,h-1526726619,i0,a0,cen-US,dAAAAAAAAAAA1,y0,s1,m1,o1,t4,wbcfUXdltREBLyXISSlcsQA2~AHnwHNU5IriFAADgAQAAgD8A0~UGlhbnVyYSwgQ2FtcC4sIEl0YWx50~~~~~~~~v12,w_z9OmDBqREDVXG4w1GEsQA2~AHnwHNUBcbiFAADgAamX_z4A0~VmlhIENsYXVkaW8sIDgwMTI1IE5hcGxlcyBOYXBsZXMsIEl0YWx50~~~~~~~~v12,k1",
+          "distanceUnit": "Kilometer",
+          "durationUnit": "Second",
+          "routeLegs": [
+            {
+              "actualEnd": {
+                "type": "Point",
+                "coordinates": [
+                  40.829608,
+                  14.191072
+                ]
+              },
+              "actualStart": {
+                "type": "Point",
+                "coordinates": [
+                  40.858241,
+                  14.170404
+                ]
+              },
+              "alternateVias": [],
+              "description": "Via Provinciale Montagna Spaccata, Via Vicinale Cupa Cintia",
+              "endLocation": {
+                "bbox": [
+                  40.825745,
+                  14.184266,
+                  40.833471,
+                  14.197879
+                ],
+                "name": "Via Claudio, 80125 Naples Naples, Italy",
+                "point": {
+                  "type": "Point",
+                  "coordinates": [
+                    40.829608,
+                    14.191072
+                  ]
+                },
+                "address": {
+                  "addressLine": "Via Claudio",
+                  "adminDistrict": "Campania",
+                  "adminDistrict2": "Naples",
+                  "countryRegion": "Italy",
+                  "formattedAddress": "Via Claudio, 80125 Naples Naples, Italy",
+                  "locality": "Naples",
+                  "postalCode": "80125"
+                },
+                "confidence": "Medium",
+                "entityType": "RoadBlock",
+                "geocodePoints": [
+                  {
+                    "type": "Point",
+                    "coordinates": [
+                      40.829608,
+                      14.191072
+                    ],
+                    "calculationMethod": "Interpolation",
+                    "usageTypes": [
+                      "Display"
+                    ]
+                  }
+                ],
+                "matchCodes": [
+                  "Good"
+                ]
+              },
+              "endTime": "/Date(1691971008390-0700)/",
+              "itineraryItems": [
+                {
+                  "compassDirection": "south",
+                  "details": [
+                    {
+                      "compassDegrees": 183,
+                      "endPathIndices": [
+                        4
+                      ],
+                      "locationCodes": [
+                        "501-27598",
+                        "501N27598",
+                        "501-27597",
+                        "501N27597"
+                      ],
+                      "maneuverType": "DepartStart",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Provinciale Napoli"
+                      ],
+                      "roadType": "Arterial",
+                      "startPathIndices": [
+                        0
+                      ]
+                    }
+                  ],
+                  "exit": "",
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "DepartStart",
+                    "text": "Head south on Via Provinciale Napoli toward Via Vicinale Trencia"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.858241,
+                      14.170404
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "towardsRoadName": "Via Vicinale Trencia",
+                  "transitTerminus": "",
+                  "travelDistance": 0.638,
+                  "travelDuration": 73,
+                  "travelMode": "Driving"
+                },
+                {
+                  "compassDirection": "west",
+                  "details": [
+                    {
+                      "compassDegrees": 285,
+                      "endPathIndices": [
+                        8
+                      ],
+                      "locationCodes": [
+                        "501+27554"
+                      ],
+                      "maneuverType": "TurnRight",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Provinciale Montagna Spaccata"
+                      ],
+                      "roadType": "MajorRoad",
+                      "startPathIndices": [
+                        4
+                      ]
+                    }
+                  ],
+                  "exit": "",
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "TurnRight",
+                    "text": "Turn right onto Via Provinciale Montagna Spaccata"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.853712,
+                      14.16606
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "transitTerminus": "",
+                  "travelDistance": 0.035,
+                  "travelDuration": 8,
+                  "travelMode": "Driving"
+                },
+                {
+                  "compassDirection": "east",
+                  "details": [
+                    {
+                      "compassDegrees": 107,
+                      "endPathIndices": [
+                        12
+                      ],
+                      "locationCodes": [
+                        "501-27553",
+                        "501N27553",
+                        "501-27552"
+                      ],
+                      "maneuverType": "UTurn",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Provinciale Montagna Spaccata"
+                      ],
+                      "roadType": "MajorRoad",
+                      "startPathIndices": [
+                        8
+                      ]
+                    }
+                  ],
+                  "exit": "",
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "UTurn",
+                    "text": "Make a U-turn to stay on Via Provinciale Montagna Spaccata"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.85381,
+                      14.165666
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "transitTerminus": "",
+                  "travelDistance": 0.308,
+                  "travelDuration": 55,
+                  "travelMode": "Driving"
+                },
+                {
+                  "compassDirection": "southeast",
+                  "details": [
+                    {
+                      "compassDegrees": 131,
+                      "endPathIndices": [
+                        15
+                      ],
+                      "locationCodes": [
+                        "501-27552"
+                      ],
+                      "maneuverType": "EnterRoundabout",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Provinciale Montagna Spaccata"
+                      ],
+                      "roadType": "MajorRoad",
+                      "startPathIndices": [
+                        12
+                      ]
+                    },
+                    {
+                      "compassDegrees": 142,
+                      "endPathIndices": [
+                        19
+                      ],
+                      "locationCodes": [
+                        "501-27552"
+                      ],
+                      "maneuverType": "ExitRoundabout",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Provinciale Montagna Spaccata"
+                      ],
+                      "roadType": "MajorRoad",
+                      "startPathIndices": [
+                        15
+                      ]
+                    }
+                  ],
+                  "exit": "1",
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "EnterThenExitRoundabout",
+                    "text": "At the roundabout, take the 1st exit"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.852686,
+                      14.16877
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "transitTerminus": "",
+                  "travelDistance": 1.006,
+                  "travelDuration": 84,
+                  "travelMode": "Driving"
+                },
+                {
+                  "compassDirection": "southeast",
+                  "details": [
+                    {
+                      "compassDegrees": 155,
+                      "endPathIndices": [
+                        21
+                      ],
+                      "locationCodes": [
+                        "501N27552"
+                      ],
+                      "maneuverType": "EnterRoundabout",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Domenico Padula"
+                      ],
+                      "roadType": "MajorRoad",
+                      "startPathIndices": [
+                        19
+                      ]
+                    },
+                    {
+                      "compassDegrees": 121,
+                      "endPathIndices": [
+                        23
+                      ],
+                      "locationCodes": [
+                        "501-27551"
+                      ],
+                      "maneuverType": "ExitRoundabout",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Domenico Padula"
+                      ],
+                      "roadType": "MajorRoad",
+                      "startPathIndices": [
+                        21
+                      ]
+                    }
+                  ],
+                  "exit": "1",
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "EnterThenExitRoundabout",
+                    "text": "At the roundabout, take the 1st exit for Via Domenico Padula"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.84906,
+                      14.179666
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "transitTerminus": "",
+                  "travelDistance": 0.036,
+                  "travelDuration": 8,
+                  "travelMode": "Driving"
+                },
+                {
+                  "compassDirection": "east",
+                  "details": [
+                    {
+                      "compassDegrees": 110,
+                      "endPathIndices": [
+                        26
+                      ],
+                      "locationCodes": [
+                        "501-27551"
+                      ],
+                      "maneuverType": "RoadNameChange",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Provinciale Montagna Spaccata"
+                      ],
+                      "roadType": "MajorRoad",
+                      "startPathIndices": [
+                        23
+                      ]
+                    }
+                  ],
+                  "exit": "",
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "RoadNameChange",
+                    "text": "Road name changes to Via Provinciale Montagna Spaccata"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.848863,
+                      14.179986
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "transitTerminus": "",
+                  "travelDistance": 0.367,
+                  "travelDuration": 29,
+                  "travelMode": "Driving"
+                },
+                {
+                  "compassDirection": "south",
+                  "details": [
+                    {
+                      "compassDegrees": 165,
+                      "endPathIndices": [
+                        28
+                      ],
+                      "locationCodes": [
+                        "501N27482",
+                        "501N27551"
+                      ],
+                      "maneuverType": "EnterRoundabout",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Provinciale Montagna Spaccata"
+                      ],
+                      "roadType": "MajorRoad",
+                      "startPathIndices": [
+                        26
+                      ]
+                    },
+                    {
+                      "compassDegrees": 195,
+                      "endPathIndices": [
+                        34
+                      ],
+                      "locationCodes": [
+                        "501-27481"
+                      ],
+                      "maneuverType": "ExitRoundabout",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Vicinale Cupa Cintia"
+                      ],
+                      "roadType": "MajorRoad",
+                      "startPathIndices": [
+                        28
+                      ]
+                    }
+                  ],
+                  "exit": "1",
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "EnterThenExitRoundabout",
+                    "text": "At the roundabout, take the 1st exit for Via Vicinale Cupa Cintia"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.847142,
+                      14.18367
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "transitTerminus": "",
+                  "travelDistance": 0.567,
+                  "travelDuration": 46,
+                  "travelMode": "Driving"
+                },
+                {
+                  "compassDirection": "southeast",
+                  "details": [
+                    {
+                      "compassDegrees": 209,
+                      "endPathIndices": [
+                        37
+                      ],
+                      "locationCodes": [
+                        "501N27481",
+                        "501P27428"
+                      ],
+                      "maneuverType": "EnterRoundabout",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Vicinale Cupa Cintia"
+                      ],
+                      "roadType": "MajorRoad",
+                      "startPathIndices": [
+                        34
+                      ]
+                    },
+                    {
+                      "compassDegrees": 136,
+                      "endPathIndices": [
+                        42
+                      ],
+                      "locationCodes": [
+                        "501-27480",
+                        "501-27499",
+                        "501N27480",
+                        "501-27479",
+                        "501N27499"
+                      ],
+                      "maneuverType": "ExitRoundabout",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Vicinale Cupa Cintia"
+                      ],
+                      "roadType": "MajorRoad",
+                      "startPathIndices": [
+                        37
+                      ]
+                    }
+                  ],
+                  "exit": "1",
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "EnterThenExitRoundabout",
+                    "text": "At the roundabout, take the 1st exit"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.842559,
+                      14.185726
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "transitTerminus": "",
+                  "travelDistance": 1.313,
+                  "travelDuration": 120,
+                  "travelMode": "Driving"
+                },
+                {
+                  "compassDirection": "south",
+                  "details": [
+                    {
+                      "compassDegrees": 191,
+                      "endPathIndices": [
+                        46
+                      ],
+                      "locationCodes": [
+                        "501-27479",
+                        "501+27500",
+                        "501N27479"
+                      ],
+                      "maneuverType": "BearRight",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Terracina"
+                      ],
+                      "roadType": "MajorRoad",
+                      "startPathIndices": [
+                        42
+                      ]
+                    }
+                  ],
+                  "exit": "",
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "BearRight",
+                    "text": "Bear right onto Via Terracina"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.831763,
+                      14.191372
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "transitTerminus": "",
+                  "travelDistance": 0.065,
+                  "travelDuration": 10,
+                  "travelMode": "Driving"
+                },
+                {
+                  "compassDirection": "south",
+                  "details": [
+                    {
+                      "compassDegrees": 195,
+                      "endPathIndices": [
+                        49
+                      ],
+                      "locationCodes": [
+                        "501+27500"
+                      ],
+                      "maneuverType": "RoadNameChange",
+                      "mode": "Driving",
+                      "names": [
+                        "Piazza Gabriele D'Annunzio"
+                      ],
+                      "roadType": "MajorRoad",
+                      "startPathIndices": [
+                        46
+                      ]
+                    }
+                  ],
+                  "exit": "",
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "RoadNameChange",
+                    "text": "Road name changes to Piazza Gabriele D'Annunzio"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.831188,
+                      14.191243
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "transitTerminus": "",
+                  "travelDistance": 0.167,
+                  "travelDuration": 18,
+                  "travelMode": "Driving"
+                },
+                {
+                  "compassDirection": "west",
+                  "details": [
+                    {
+                      "compassDegrees": 267,
+                      "endPathIndices": [
+                        50
+                      ],
+                      "maneuverType": "TurnRight",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Claudio"
+                      ],
+                      "roadType": "Street",
+                      "startPathIndices": [
+                        49
+                      ]
+                    }
+                  ],
+                  "exit": "",
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "TurnRight",
+                    "text": "Turn right onto Via Claudio"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.82971,
+                      14.191012
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "transitTerminus": "",
+                  "travelDistance": 0.027,
+                  "travelDuration": 8,
+                  "travelMode": "Driving"
+                },
+                {
+                  "compassDirection": "south",
+                  "details": [
+                    {
+                      "compassDegrees": 164,
+                      "endPathIndices": [
+                        52
+                      ],
+                      "maneuverType": "TurnToStayLeft",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Claudio"
+                      ],
+                      "roadType": "Street",
+                      "startPathIndices": [
+                        50
+                      ]
+                    }
+                  ],
+                  "exit": "",
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "TurnToStayLeft",
+                    "text": "Turn left to stay on Via Claudio"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.829696,
+                      14.190688
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "transitTerminus": "",
+                  "travelDistance": 0.114,
+                  "travelDuration": 33,
+                  "travelMode": "Driving"
+                },
+                {
+                  "compassDirection": "northeast",
+                  "details": [
+                    {
+                      "compassDegrees": 61,
+                      "endPathIndices": [
+                        54
+                      ],
+                      "maneuverType": "TurnToStayLeft",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Claudio"
+                      ],
+                      "roadType": "Street",
+                      "startPathIndices": [
+                        52
+                      ]
+                    }
+                  ],
+                  "exit": "",
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "TurnToStayLeft",
+                    "text": "Turn left to stay on Via Claudio"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.828698,
+                      14.190971
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "transitTerminus": "",
+                  "travelDistance": 0.105,
+                  "travelDuration": 41,
+                  "travelMode": "Driving"
+                },
+                {
+                  "compassDirection": "northeast",
+                  "details": [
+                    {
+                      "compassDegrees": 23,
+                      "endPathIndices": [
+                        54
+                      ],
+                      "maneuverType": "ArriveFinish",
+                      "mode": "Driving",
+                      "names": [
+                        "Via Claudio"
+                      ],
+                      "roadType": "Street",
+                      "startPathIndices": [
+                        54
+                      ]
+                    }
+                  ],
+                  "exit": "",
+                  "hints": [
+                    {
+                      "hintType": "PreviousIntersection",
+                      "text": "The last intersection before your destination is Piazza Gabriele D'Annunzio"
+                    }
+                  ],
+                  "iconType": "Auto",
+                  "instruction": {
+                    "formattedText": null,
+                    "maneuverType": "ArriveFinish",
+                    "text": "Arrive at Via Claudio, 80125 Naples Naples, Italy"
+                  },
+                  "isRealTimeTransit": false,
+                  "maneuverPoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.829608,
+                      14.191072
+                    ]
+                  },
+                  "realTimeTransitDelay": 0,
+                  "sideOfStreet": "Unknown",
+                  "tollZone": "",
+                  "transitTerminus": "",
+                  "travelDistance": 0,
+                  "travelDuration": 0,
+                  "travelMode": "Driving"
+                }
+              ],
+              "routeRegion": "WWMX",
+              "routeSubLegs": [
+                {
+                  "endWaypoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.829608,
+                      14.191072
+                    ],
+                    "description": "Via Claudio, 80125 Naples Naples, Italy",
+                    "isVia": false,
+                    "locationIdentifier": "0|121|240|28|213|1|113|184|133|0|0|224|1|169|151|255|62|0|40.829608,14.191072",
+                    "routePathIndex": 54
+                  },
+                  "startWaypoint": {
+                    "type": "Point",
+                    "coordinates": [
+                      40.858241,
+                      14.170404
+                    ],
+                    "description": "Pianura, Camp., Italy",
+                    "isVia": false,
+                    "locationIdentifier": "0|121|240|28|213|57|34|184|133|0|0|224|1|0|0|128|63|0|40.858241,14.170404",
+                    "routePathIndex": 0
+                  },
+                  "travelDistance": 4.748,
+                  "travelDuration": 539
+                }
+              ],
+              "startLocation": {
+                "bbox": [
+                  40.839104,
+                  14.13319,
+                  40.874699,
+                  14.191298
+                ],
+                "name": "Pianura, Camp., Italy",
+                "point": {
+                  "type": "Point",
+                  "coordinates": [
+                    40.858196,
+                    14.170487
+                  ]
+                },
+                "address": {
+                  "adminDistrict": "Camp.",
+                  "adminDistrict2": "Naples",
+                  "countryRegion": "Italy",
+                  "formattedAddress": "Pianura, Camp., Italy",
+                  "locality": "Naples"
+                },
+                "confidence": "High",
+                "entityType": "Neighborhood",
+                "geocodePoints": [
+                  {
+                    "type": "Point",
+                    "coordinates": [
+                      40.858196,
+                      14.170487
+                    ],
+                    "calculationMethod": "Rooftop",
+                    "usageTypes": [
+                      "Display"
+                    ]
+                  }
+                ],
+                "matchCodes": [
+                  "Good"
+                ]
+              },
+              "startTime": "/Date(1691970469390-0700)/",
+              "travelDistance": 4.748,
+              "travelDuration": 539,
+              "travelMode": "Driving"
+            }
+          ],
+          "trafficCongestion": "None",
+          "trafficDataUsed": "None",
+          "travelDistance": 4.748,
+          "travelDuration": 539,
+          "travelDurationTraffic": 528,
+          "travelMode": "Driving"
+        }
+      ]
+    }
+  ],
+  "statusCode": 200,
+  "statusDescription": "OK",
+  "traceId": "13487041074d4f18a73fe0a6b7fe8dbc|DU00003083|0.0.0.0|DUB000929D, Leg0-DUB000928F|Ref A: 095C6265770044B08FE1B623748B01D6 Ref B: DB3EDGE2217 Ref C: 2023-08-13T14:47:49Z|Ref A: F839781E0CE44FD29BE2D35774AF5955 Ref B: DB3EDGE2610 Ref C: 2023-08-13T14:47:49Z"
+}

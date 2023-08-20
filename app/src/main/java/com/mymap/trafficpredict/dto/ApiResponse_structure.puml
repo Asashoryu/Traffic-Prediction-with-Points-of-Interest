@@ -1,0 +1,204 @@
+@startuml
+
+/' diagram meta data start
+config=StructureConfiguration;
+{
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": "",
+    "treatFinalFieldsAsMandatory": false
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": true,
+    "cutInterfaceStructures": true,
+    "cutDataStructures": true,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 3,
+    "backwardDepth": 3,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false, // root node is included
+    "useMethodCallsForStructureDiagram": "ForwardOnly" // ForwardOnly, BothDirections, No
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showClassGenericTypes": true,
+    "showMethods": true,
+    "showMethodParameterNames": true,
+    "showMethodParameterTypes": true,
+    "showMethodReturnType": true,
+    "showPackageLevels": 2,
+    "showDetailedClassStructure": true
+  },
+  "rootClass": "com.mymap.trafficpredict.dto.ApiResponse",
+  "extensionCallbackMethod": "" // qualified.class.name#methodName - signature: public static String method(String)
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="TB"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_104376368 { 
+   	label=mymap
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   subgraph cluster_136718918 { 
+   	label=trafficpredict
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   ApiResponse1402130568[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)ApiResponse</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   authenticationResultCode: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   brandLogoURI: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   copyright: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   resourceSets: ResourceSet[] [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   statusCode: long [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   statusDescription: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   traceID: String [0..1]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Resource1402130568[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Resource</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   bbox: double[] [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   distanceUnit: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   durationUnit: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   id: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   routeLegs: RouteLeg[] [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   routePath: RoutePath [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   trafficCongestion: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   trafficDataUsed: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   travelDistance: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   travelDuration: long [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   travelDurationTraffic: long [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   travelMode: Mode [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   type: String [0..1]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+ResourceSet1402130568[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)ResourceSet</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   estimatedTotal: long [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   resources: Resource[] [0..*]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+RouteLeg1402130568[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)RouteLeg</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   actualEnd: ActualEnd [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   actualStart: ActualEnd [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   alternateVias: Object[] [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   description: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   endLocation: EndLocation [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   endTime: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   itineraryItems: ItineraryItem[] [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   routeRegion: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   routeSubLegs: RouteSubLeg[] [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   startLocation: StartLocation [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   startTime: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   travelDistance: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   travelDuration: long [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   travelMode: Mode [0..1]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+RoutePath1402130568[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)RoutePath</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   generalizations: Object[] [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   line: Line [0..1]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+} 
+
+'edges    
+ApiResponse1402130568 -> ResourceSet1402130568[label="resourceSets
+[0..*]"];
+Resource1402130568 -> RouteLeg1402130568[label="routeLegs
+[0..*]"];
+Resource1402130568 -> RoutePath1402130568[label="routePath
+[0..1]"];
+ResourceSet1402130568 -> Resource1402130568[label="resources
+[0..*]"];
+    
+}
+@enduml

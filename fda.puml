@@ -1,0 +1,10 @@
+@startuml
+class com.mymap.trafficpredict.dto.ActualEnd {
+- Type type
+- double[] coordinates
++ Type getType()
++ void setType(Type)
++ double[] getCoordinates()
++ void setCoordinates(double[])
+}
+@enduml
