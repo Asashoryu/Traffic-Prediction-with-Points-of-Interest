@@ -4,30 +4,21 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
-import com.google.android.gms.maps.model.Polyline;
 import com.microsoft.maps.*;
-import com.microsoft.maps.search.MapLocation;
 import com.mymap.trafficpredict.BuildConfig;
-import com.mymap.trafficpredict.R;
 import com.mymap.trafficpredict.databinding.FragmentMapBinding;
 import com.mymap.trafficpredict.viewmodel.MapViewModel;
 
 import com.microsoft.maps.MapRenderMode;
 import com.microsoft.maps.MapView;
 
-import java.io.IOException;
 import java.util.Iterator;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class MapFragment extends Fragment {
 
@@ -43,6 +34,8 @@ public class MapFragment extends Fragment {
 
     Thread twinklingThread;
 
+    LinkedBlockingQueue<MapElement> bq = new LinkedBlockingQueue();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,7 +43,6 @@ public class MapFragment extends Fragment {
 
         fragmentView = mapBinding.getRoot();
         startMap(savedInstanceState);
-
 
         observeRoutesUpdates();
 
@@ -80,7 +72,7 @@ public class MapFragment extends Fragment {
     private void startPolylinesLayer() {
         linesLayer = new MapElementLayer();
         mMapView.getLayers().add(linesLayer);
-        beginPeriodicalTwinkleOfPaths();
+        startPeriodicalTwinkleOfPaths();
     }
 
     public void observeRoutesUpdates() {
@@ -97,25 +89,29 @@ public class MapFragment extends Fragment {
 
             mapPolyline.setStrokeWidth(3);
             linesLayer.getElements().add(mapPolyline);
+        try {
+            bq.put(mapPolyline);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void beginPeriodicalTwinkleOfPaths() {
+    public void startPeriodicalTwinkleOfPaths() {
         Runnable r = () -> {
+            MapElement prevE = null;
             while(!Thread.currentThread().isInterrupted()) {
-                MapElement prevE = null;
-                Iterator<MapElement> i = linesLayer.getElements().iterator();
-                while (i.hasNext()) {
-                    try {
-                        MapElement e = i.next();
-                        Thread.currentThread().sleep(1000);
-                        e.setZIndex(3);
-                        if (prevE != null) {
-                            e.setZIndex(2);
-                        }
-                        prevE = e;
-                    } catch (InterruptedException ex) {
-                        throw new RuntimeException(ex);
+                try {
+                    Thread.currentThread().sleep(1000);
+                    MapElement e = bq.take();
+                    System.out.println("Twinkle try..1");
+                    e.setZIndex(3);
+                    if (prevE != null) {
+                        prevE.setZIndex(2);
                     }
+                    prevE = e;
+                    bq.put(e);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         };

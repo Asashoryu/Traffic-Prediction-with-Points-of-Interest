@@ -65,10 +65,10 @@ public class MapViewModel extends ViewModel {
     }
 
     public void loadPoolOfColors() {
-        //Red
-        poolOfColors.add(-65536);
         //Blue
         poolOfColors.add(-16776961);
+        //Red
+        poolOfColors.add(-65536);
         //Green
         poolOfColors.add(-16711936);
         //Yellow
@@ -182,114 +182,6 @@ public class MapViewModel extends ViewModel {
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                     System.err.println("Error processing JSON response.");
-                }
-            }
-
-
-            private void buildAndShowPath(JsonNode resourceNode) {
-                ArrayList<Geoposition> newPath = new ArrayList<>();
-
-                JsonNode routePath = resourceNode.path("routePath");
-                JsonNode line = routePath.path("line");
-                JsonNode coordinates = line.path("coordinates");
-
-                if (!coordinates.isNull() && coordinates.isArray()) {
-                    for (JsonNode coordinate : coordinates) {
-                        if (coordinate.isArray() && coordinate.size() >= 2) {
-                            double latitude = coordinate.get(0).asDouble();
-                            double longitude = coordinate.get(1).asDouble();
-                            Geoposition node = new Geoposition(latitude, longitude);
-                            newPath.add(node);
-                        } else {
-                            System.err.println("Invalid coordinate format: " + coordinate.toString());
-                        }
-                    }
-                    pathsToMap.setValue(new Geopath(newPath));
-                } else {
-                    System.err.println("Coordinates are missing or not in expected format.");
-                }
-            }
-
-            private void callSnapToRoadApi(ArrayList<Geoposition> newPath) {
-                // Construct the API request URL
-                String apiKey = BuildConfig.CREDENTIALS_KEY;
-                String endpoint = "https://dev.virtualearth.net/REST/v1/Routes/SnapToRoad";
-                StringBuilder waypoints = new StringBuilder();
-                for (int i = 0; i < newPath.size(); i++) {
-                    Geoposition g = newPath.get(i);
-                    waypoints.append(g.getLatitude()).append(",").append(g.getLongitude());
-                    if (i < newPath.size() - 1) {
-                        waypoints.append(";");
-                    }
-                }
-
-                String url = endpoint + "?points=" + waypoints.toString() + "&interpolate=true&key=" + apiKey;
-
-                System.err.println("Snap to road url: " + url);
-
-                new AsyncTask<Void, Void, String>() {
-                    @Override
-                    protected String doInBackground(Void... voids) {
-                        OkHttpClient client = new OkHttpClient();
-                        Request request = new Request.Builder()
-                                .url(url)
-                                .build();
-
-                        try {
-                            okhttp3.Response response = client.newCall(request).execute();
-                            if (response.isSuccessful()) {
-                                return response.body().string();
-                            } else {
-                                // Handle API error
-                                return null;
-                            }
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-
-                    @Override
-                    protected void onPostExecute(String responseBody) {
-                        super.onPostExecute(responseBody);
-                        if (responseBody != null) {
-                            // Parse the responseBody JSON to extract snapped points
-                            Geopath snappedPath = parseSnappedPath(responseBody);
-                            System.err.println(responseBody);
-                            // Update your path representation with the snapped points
-                            pathsToMap.setValue(snappedPath);
-                        }
-                    }
-                }.execute();
-            }
-
-            private Geopath parseSnappedPath(String responseBody) {
-                try {
-                    JSONObject jsonResponse = new JSONObject(responseBody);
-
-                    System.err.println(jsonResponse);
-
-                    JSONArray resourceSets = jsonResponse.getJSONArray("resourceSets");
-                    JSONObject firstResourceSet = resourceSets.getJSONObject(0);
-
-                    JSONArray resources = firstResourceSet.getJSONArray("resources");
-                    JSONObject firstResource = resources.getJSONObject(0);
-
-                    JSONArray snappedPoints = firstResource.getJSONArray("snappedPoints");
-
-                    ArrayList<Geoposition> snappedPath = new ArrayList<>();
-                    for (int i = 0; i < snappedPoints.length(); i++) {
-                        JSONObject snappedPoint = snappedPoints.getJSONObject(i);
-                        JSONObject coordinate = snappedPoint.getJSONObject("coordinate");
-                        double latitude = coordinate.getDouble("latitude");
-                        double longitude = coordinate.getDouble("longitude");
-
-                        snappedPath.add(new Geoposition(latitude, longitude));
-                    }
-
-                    return new Geopath(snappedPath);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return null; // Handle the error case appropriately
                 }
             }
 
