@@ -5,14 +5,14 @@ import android.os.AsyncTask;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.microsoft.maps.Geopath;
 import com.microsoft.maps.Geoposition;
 import com.mymap.trafficpredict.BuildConfig;
-import com.mymap.trafficpredict.dto.ApiResponse;
-import com.mymap.trafficpredict.dto.ItineraryItem;
-import com.mymap.trafficpredict.dto.Mode;
 import com.mymap.trafficpredict.service.BingMapsService;
 
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +32,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
+import retrofit2.internal.EverythingIsNonNull;
 
 public class MapViewModel extends ViewModel {
 
@@ -52,7 +53,7 @@ public class MapViewModel extends ViewModel {
     public void loadRandomDepartureLocations() {
         poolOfDepartureLocations.add("Pianura, Naples, Campania, Italy");
         poolOfDepartureLocations.add("Quarto, Naples, Campania, Italy");
-        poolOfDepartureLocations.add("Agnano");
+        poolOfDepartureLocations.add("Arenella, Naples, Campania, Italy");
         poolOfDepartureLocations.add("Campobasso, Campobasso, Molise, Italy");
         poolOfDepartureLocations.add("Isernia, 86170, Isernia, Molise, Italy");
     }
@@ -66,14 +67,14 @@ public class MapViewModel extends ViewModel {
     public void loadPoolOfColors() {
         //Red
         poolOfColors.add(-65536);
-        //Purple
-        poolOfColors.add(-65281);
-        //Yellow
-        poolOfColors.add(-256);
-        //Green
-        poolOfColors.add(-16711936);
         //Blue
         poolOfColors.add(-16776961);
+        //Green
+        poolOfColors.add(-16711936);
+        //Yellow
+        poolOfColors.add(-256);
+        //Purple
+        poolOfColors.add(-65281);
         //LightBlue
         poolOfColors.add(-16711681);
         //Orange
@@ -140,47 +141,73 @@ public class MapViewModel extends ViewModel {
 
         BingMapsService service = retrofit.create(BingMapsService.class);
 
-        Call<ApiResponse> call = service.getRoute("Driving", start, end, BuildConfig.CREDENTIALS_KEY, "all");
+        Call<JsonNode> call = service.getRoute("Driving", start, end, BuildConfig.CREDENTIALS_KEY, "all");
 
-        call.enqueue(new Callback<ApiResponse>() {
+        call.enqueue(new Callback<JsonNode>() {
             @Override
-            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                // Convert the response body to a JSON string
-                Gson gson = new Gson();
-                JsonElement responseJson = gson.toJsonTree(response.body());
+            @EverythingIsNonNull
+            public void onResponse(Call<JsonNode> call, Response<JsonNode> response) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode;
+                try {
+                    jsonNode = objectMapper.readTree(String.valueOf(response.body()));
+                    System.out.println("Json response message is: " + jsonNode.toString());
 
-                // Print the JSON string
-                String jsonString = gson.toJson(responseJson);
-                System.out.println(jsonString);
+                    // Extract specific fields from JSON
+                    JsonNode coordinatesArray = jsonNode
+                            .path("resourceSets")
+                            .path(0)
+                            .path("resources")
+                            .path(0)
+                            .path("routePath")
+                            .path("line")
+                            .path("coordinates");
 
-                // Parse the response and extract route details
-                ApiResponse apiResponse = response.body();
-
-                Mode m = apiResponse.getResourceSets()[0].getResources()[0].getTravelMode();
-
-                if (apiResponse != null && m != null) {
-                    buildAndShowPath(apiResponse);
-                } else {
-                    // Handle case where response doesn't have routes or is null
-                    System.err.println("Api response received but with some problems in formatting..");
+                    if (coordinatesArray.isArray()) {
+                        ArrayList<Geoposition> newPath = new ArrayList<>();
+                        for (JsonNode coordinateNode : coordinatesArray) {
+                            if (coordinateNode.isArray() && coordinateNode.size() >= 2) {
+                                double latitude = coordinateNode.get(0).asDouble();
+                                double longitude = coordinateNode.get(1).asDouble();
+                                Geoposition node = new Geoposition(latitude, longitude);
+                                newPath.add(node);
+                            } else {
+                                System.err.println("Invalid coordinate format: " + coordinateNode.toString());
+                            }
+                        }
+                        pathsToMap.setValue(new Geopath(newPath));
+                    } else {
+                        System.err.println("Coordinates array is missing or not in expected format.");
+                    }
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                    System.err.println("Error processing JSON response.");
                 }
             }
 
-            private void buildAndShowPath(ApiResponse apiResponse) {
-                ArrayList<Geoposition> newPath = new ArrayList();
-                double[] startCoordinates = apiResponse.getResourceSets()[0].getResources()[0].getRouteLegs()[0].getActualStart().getCoordinates();
-                double[] endCoordinates = apiResponse.getResourceSets()[0].getResources()[0].getRouteLegs()[0].getActualEnd().getCoordinates();
-                newPath.add(new Geoposition(startCoordinates[0], startCoordinates[1]));
-                ItineraryItem[] items = apiResponse.getResourceSets()[0].getResources()[0].getRouteLegs()[0].getItineraryItems();
-                for (ItineraryItem i : items) {
-                    Geoposition node = new Geoposition(i.getManeuverPoint().getCoordinates()[0], i.getManeuverPoint().getCoordinates()[1]);
-                    newPath.add(node);
-                    //System.err.println(i.getDetails()[0].getNames()[0]);
+
+            private void buildAndShowPath(JsonNode resourceNode) {
+                ArrayList<Geoposition> newPath = new ArrayList<>();
+
+                JsonNode routePath = resourceNode.path("routePath");
+                JsonNode line = routePath.path("line");
+                JsonNode coordinates = line.path("coordinates");
+
+                if (!coordinates.isNull() && coordinates.isArray()) {
+                    for (JsonNode coordinate : coordinates) {
+                        if (coordinate.isArray() && coordinate.size() >= 2) {
+                            double latitude = coordinate.get(0).asDouble();
+                            double longitude = coordinate.get(1).asDouble();
+                            Geoposition node = new Geoposition(latitude, longitude);
+                            newPath.add(node);
+                        } else {
+                            System.err.println("Invalid coordinate format: " + coordinate.toString());
+                        }
+                    }
+                    pathsToMap.setValue(new Geopath(newPath));
+                } else {
+                    System.err.println("Coordinates are missing or not in expected format.");
                 }
-                newPath.add(new Geoposition(endCoordinates[0], endCoordinates[1]));
-                //Comment to not snap
-                //callSnapToRoadApi(newPath);
-                pathsToMap.setValue(new Geopath(newPath));
             }
 
             private void callSnapToRoadApi(ArrayList<Geoposition> newPath) {
@@ -267,7 +294,7 @@ public class MapViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse> call, Throwable t) {
+            public void onFailure(Call<JsonNode> call, Throwable t) {
                 // Handle API call failure
                 System.err.println("Api failure somewhere.." + t.getMessage());
             }

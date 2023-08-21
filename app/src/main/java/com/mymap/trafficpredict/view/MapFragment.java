@@ -23,6 +23,7 @@ import com.microsoft.maps.MapRenderMode;
 import com.microsoft.maps.MapView;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -37,6 +38,10 @@ public class MapFragment extends Fragment {
     private static boolean centered = false;
 
     private MapView mMapView;
+
+    MapElementLayer linesLayer;
+
+    Thread twinklingThread;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,6 +64,8 @@ public class MapFragment extends Fragment {
         mMapView = new MapView(getContext(), MapRenderMode.VECTOR);  // or use MapRenderMode.RASTER for 2D map
         mMapView.setCredentialsKey(BuildConfig.CREDENTIALS_KEY);
         mapBinding.mapView.addView(mMapView);
+        // add polylines layer
+        startPolylinesLayer();
         // center the map on the first rendering
         mMapView.addOnMapLoadingStatusChangedListener((status) -> {
             if (status == MapLoadingStatus.COMPLETE && !centered) {
@@ -68,6 +75,12 @@ public class MapFragment extends Fragment {
             return false;
         });
         mMapView.onCreate(savedInstanceState);
+    }
+
+    private void startPolylinesLayer() {
+        linesLayer = new MapElementLayer();
+        mMapView.getLayers().add(linesLayer);
+        beginPeriodicalTwinkleOfPaths();
     }
 
     public void observeRoutesUpdates() {
@@ -81,11 +94,33 @@ public class MapFragment extends Fragment {
             MapPolyline mapPolyline = new MapPolyline();
             mapPolyline.setPath(path);
             mapPolyline.setStrokeColor(mapViewModel.getColorInOrder());
+
             mapPolyline.setStrokeWidth(3);
-            MapElementLayer linesLayer = new MapElementLayer();
-            linesLayer.setZIndex(1.0f);
             linesLayer.getElements().add(mapPolyline);
-            mMapView.getLayers().add(linesLayer);
+    }
+
+    public void beginPeriodicalTwinkleOfPaths() {
+        Runnable r = () -> {
+            while(!Thread.currentThread().isInterrupted()) {
+                MapElement prevE = null;
+                Iterator<MapElement> i = linesLayer.getElements().iterator();
+                while (i.hasNext()) {
+                    try {
+                        MapElement e = i.next();
+                        Thread.currentThread().sleep(1000);
+                        e.setZIndex(3);
+                        if (prevE != null) {
+                            e.setZIndex(2);
+                        }
+                        prevE = e;
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        };
+        twinklingThread = new Thread(r);
+        twinklingThread.start();
     }
 
     public void centerOnNaples() {
