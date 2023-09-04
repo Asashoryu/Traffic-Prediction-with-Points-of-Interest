@@ -1,5 +1,6 @@
 package com.mymap.trafficpredict.view;
 
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -30,11 +31,13 @@ public class MapFragment extends Fragment {
 
     private MapView mMapView;
 
-    MapElementLayer linesLayer;
+    private MapElementLayer linesLayer;
 
-    Thread twinklingThread;
+    private MapElementLayer pinLayer;
 
-    LinkedBlockingQueue<MapElement> bq = new LinkedBlockingQueue();
+    private Thread twinklingThread;
+
+    private LinkedBlockingQueue<MapElement> bq = new LinkedBlockingQueue();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,7 +47,9 @@ public class MapFragment extends Fragment {
         fragmentView = mapBinding.getRoot();
         startMap(savedInstanceState);
 
+        //observePinsReady();
         observeRoutesUpdates();
+        observeTrafficCollisionUpdates();
 
         return fragmentView;
     }
@@ -58,6 +63,7 @@ public class MapFragment extends Fragment {
         mapBinding.mapView.addView(mMapView);
         // add polylines layer
         startPolylinesLayer();
+        startPinsLayer();
         // center the map on the first rendering
         mMapView.addOnMapLoadingStatusChangedListener((status) -> {
             if (status == MapLoadingStatus.COMPLETE && !centered) {
@@ -65,6 +71,20 @@ public class MapFragment extends Fragment {
                 centered = true;
             }
             return false;
+        });
+        mMapView.addOnMapHoldingListener((doubleTapEvent) -> {
+            if (mapViewModel.newDeparturePoint.getValue() == null) {
+                mapViewModel.newDeparturePoint.setValue(doubleTapEvent.location.getPosition());
+            }
+            else {
+                Geoposition departureGeoposition = mapViewModel.newDeparturePoint.getValue();
+                Geoposition arrivalGeoposition = doubleTapEvent.location.getPosition();
+                String departure = departureGeoposition.getLatitude() + "," + departureGeoposition.getLongitude();
+                String arrival = arrivalGeoposition.getLatitude() + "," + arrivalGeoposition.getLongitude();
+                mapViewModel.calculateRoute(departure, arrival);
+                mapViewModel.newDeparturePoint.setValue(null);
+            }
+            return true;
         });
         mMapView.onCreate(savedInstanceState);
     }
@@ -75,13 +95,17 @@ public class MapFragment extends Fragment {
         startPeriodicalTwinkleOfPaths();
     }
 
+    private void startPinsLayer() {
+        pinLayer = new MapElementLayer();
+        mMapView.getLayers().add(pinLayer);
+    }
+
     public void observeRoutesUpdates() {
         mapViewModel.pathsToMap.observe(getViewLifecycleOwner(), (newPath) -> {
-            System.out.println("Observed successfully..");
+            System.err.println("New path observed successfully..");
             displayPath(newPath);
         });
     }
-
     public void displayPath(Geopath path) {
             MapPolyline mapPolyline = new MapPolyline();
             mapPolyline.setPath(path);
@@ -94,6 +118,31 @@ public class MapFragment extends Fragment {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void observeTrafficCollisionUpdates() {
+        mapViewModel.newCollision.observe(getViewLifecycleOwner(), (geoposition) -> {
+            System.err.println("New collision observed successfully..");
+            displayTrafficCollision(geoposition);
+        });
+    }
+
+    public void displayTrafficCollision(Geoposition geoposition) {
+        displayPinpoint(geoposition);
+    }
+
+    public void displayPinpoint(Geoposition geoposition) {
+        MapIcon pushpin = new MapIcon();
+        pushpin.setLocation(new Geopoint(geoposition));
+        pushpin.setTitle("Here collision expected");
+
+        MapFlyout flyout = new MapFlyout();
+        flyout.setTitle("Traffic");
+        flyout.setDescription("Collision expected");
+        pushpin.setFlyout(flyout);
+
+        pinLayer.getElements().add(pushpin);
+
     }
 
     public void startPeriodicalTwinkleOfPaths() {
@@ -125,7 +174,7 @@ public class MapFragment extends Fragment {
         double naplesLongitude = 14.24641;
 
         // Create a MapScene centered on the target location and set the desired zoom level
-        MapScene mapScene = MapScene.createFromLocationAndZoomLevel(new Geopoint(naplesLatitude, naplesLongitude), 8); // Adjust zoom level as needed
+        MapScene mapScene = MapScene.createFromLocationAndZoomLevel(new Geopoint(naplesLatitude, naplesLongitude), 12); // Adjust zoom level as needed
 
         // Set the MapScene to move the map to the specified location
         mMapView.setScene(mapScene, MapAnimationKind.BOW);

@@ -8,17 +8,14 @@ import androidx.lifecycle.ViewModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.microsoft.maps.Geopath;
 import com.microsoft.maps.Geoposition;
 import com.mymap.trafficpredict.BuildConfig;
+import com.mymap.trafficpredict.model.Street;
+import com.mymap.trafficpredict.model.TrafficManager;
 import com.mymap.trafficpredict.service.BingMapsService;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,9 +35,17 @@ public class MapViewModel extends ViewModel {
 
     public MutableLiveData<Geopath> pathsToMap = new MutableLiveData<>();
 
-    public ArrayList<String> poolOfDepartureLocations = new ArrayList<>();
-    public ArrayList<String> poolOfArrivalLocations = new ArrayList<>();
-    public ArrayList<Integer> poolOfColors = new ArrayList<>();
+    public MutableLiveData<Geoposition> newCollision = new MutableLiveData<>();
+
+    public MutableLiveData<Geoposition> newDeparturePoint = new MutableLiveData<>(null);
+    public MutableLiveData<Geoposition> newArrivalPoint = new MutableLiveData<>(null);
+
+
+    private ArrayList<String> poolOfDepartureLocations = new ArrayList<>();
+    private ArrayList<String> poolOfArrivalLocations = new ArrayList<>();
+    private ArrayList<Integer> poolOfColors = new ArrayList<>();
+
+    private TrafficManager trafficManager;
 
     private static int increasingIndex = 0;
 
@@ -48,20 +53,30 @@ public class MapViewModel extends ViewModel {
         loadRandomDepartureLocations();
         loadRandomArrivalLocations();
         loadPoolOfColors();
+        trafficManager = new TrafficManager();
     }
 
     public void loadRandomDepartureLocations() {
         poolOfDepartureLocations.add("Pianura, Naples, Campania, Italy");
         poolOfDepartureLocations.add("Quarto, Naples, Campania, Italy");
         poolOfDepartureLocations.add("Arenella, Naples, Campania, Italy");
-        poolOfDepartureLocations.add("Campobasso, Campobasso, Molise, Italy");
-        poolOfDepartureLocations.add("Isernia, 86170, Isernia, Molise, Italy");
+        poolOfDepartureLocations.add("Pozzuoli, Naples, Campania, Italy");
+        poolOfDepartureLocations.add("Via Monterusciello, 80078 Pozzuoli Naples");
+        poolOfDepartureLocations.add("Soccavo, Naples, Naples, Campania, Italy");
+        //poolOfDepartureLocations.add("Campobasso, Campobasso, Molise, Italy");
+        //poolOfDepartureLocations.add("Isernia, 86170, Isernia, Molise, Italy");
     }
 
     public void loadRandomArrivalLocations() {
-        poolOfArrivalLocations.add("Catanzaro, Calabria, Italy");
-        poolOfArrivalLocations.add("Reggio di Calabria, Reggio di Calabria, Calabria, Italy");
-        poolOfArrivalLocations.add("Potenza, Potenza, Basilicata, Italy");
+        //poolOfArrivalLocations.add("Catanzaro, Calabria, Italy");
+        //poolOfArrivalLocations.add("Reggio di Calabria, Reggio di Calabria, Calabria, Italy");
+        //poolOfArrivalLocations.add("Potenza, Potenza, Basilicata, Italy");
+        poolOfArrivalLocations.add("Via Claudio, 80125 Naples Naples");
+        poolOfArrivalLocations.add("Fuorigrotta, Naples, Naples, Campania, Italy");
+        poolOfArrivalLocations.add("Via Terracina, 80125 Naples Naples");
+        poolOfArrivalLocations.add("Via John Fitzgerald Kennedy, 80125 Naples Naples");
+        poolOfArrivalLocations.add("Via Pietro Metastasio, 80125 Naples Naples");
+
     }
 
     public void loadPoolOfColors() {
@@ -105,14 +120,14 @@ public class MapViewModel extends ViewModel {
         System.out.println("Random Non-Negative int generated: " + randomNonNegativeInt);
         return randomNonNegativeInt;
     }
-
+    // for static targets
     public void calculateRoute() {
         String start = getRandomDepartureLocation();
         String end = getRandomArrivalLocation();
-        getRoute(start, end);
+        calculateRoute(start, end);
     }
-
-    private void getRoute(String start, String end) {
+    // for dynamic targets
+    public void calculateRoute(String start, String end) {
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
@@ -141,7 +156,7 @@ public class MapViewModel extends ViewModel {
 
         BingMapsService service = retrofit.create(BingMapsService.class);
 
-        Call<JsonNode> call = service.getRoute("Driving", start, end, BuildConfig.CREDENTIALS_KEY, "all");
+        Call<JsonNode> call = service.getRoute("Driving", start, end, BuildConfig.CREDENTIALS_KEY, "routePath");
 
         call.enqueue(new Callback<JsonNode>() {
             @Override
@@ -164,18 +179,21 @@ public class MapViewModel extends ViewModel {
                             .path("coordinates");
 
                     if (coordinatesArray.isArray()) {
-                        ArrayList<Geoposition> newPath = new ArrayList<>();
+                        ArrayList<Geoposition> arrayOfGeopositions = new ArrayList<>();
                         for (JsonNode coordinateNode : coordinatesArray) {
                             if (coordinateNode.isArray() && coordinateNode.size() >= 2) {
                                 double latitude = coordinateNode.get(0).asDouble();
                                 double longitude = coordinateNode.get(1).asDouble();
                                 Geoposition node = new Geoposition(latitude, longitude);
-                                newPath.add(node);
+                                arrayOfGeopositions.add(node);
                             } else {
                                 System.err.println("Invalid coordinate format: " + coordinateNode.toString());
                             }
                         }
-                        pathsToMap.setValue(new Geopath(newPath));
+                        //callSnapToRoadApi(newPath);
+                        Geopath geopath = new Geopath(arrayOfGeopositions);
+                        parseStreetsAndUpdateTraffic(jsonNode, geopath);
+                        pathsToMap.setValue(geopath);
                     } else {
                         System.err.println("Coordinates array is missing or not in expected format.");
                     }
@@ -183,6 +201,94 @@ public class MapViewModel extends ViewModel {
                     e.printStackTrace();
                     System.err.println("Error processing JSON response.");
                 }
+            }
+
+            private void parseStreetsAndUpdateTraffic(JsonNode jsonNode, Geopath geopath) {
+                try {
+                    JsonNode itineraryItemsArray = jsonNode
+                            .path("resourceSets")
+                            .path(0)
+                            .path("resources")
+                            .path(0)
+                            .path("routeLegs")
+                            .path(0)
+                            .path("itineraryItems");
+
+                    System.err.println("List of names found..");
+
+                    for (JsonNode itineraryItem : itineraryItemsArray) {
+                        JsonNode detailsNode = itineraryItem
+                                .path("details")
+                                .path(0);
+
+                        if (detailsNode.isMissingNode()) {
+                            continue; // Skip this itineraryItem if details are missing
+                        }
+
+                        JsonNode namesArray = detailsNode.path("names");
+                        if (!namesArray.isMissingNode() && namesArray.isArray() && namesArray.size() > 0) {
+                            String firstName = namesArray.get(0).asText();
+                            System.err.println("First Name: " + firstName);
+
+                            JsonNode maneuverPointNode = itineraryItem.path("maneuverPoint");
+
+                            if (!maneuverPointNode.isMissingNode()) {
+                                double latitude = maneuverPointNode.path("coordinates").get(0).asDouble();
+                                double longitude = maneuverPointNode.path("coordinates").get(1).asDouble();
+                                System.err.println("Coordinates: Latitude " + latitude + ", Longitude " + longitude);
+                                Geoposition streetGeoposition = new Geoposition(latitude, longitude);
+                                boolean thereIsCollision = trafficManager.putAndCheckCollision(new Street(firstName, streetGeoposition), geopath);
+                                if (thereIsCollision) {
+                                    newCollision.setValue(streetGeoposition);
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // Get more precise points, but too slow for longer paths
+            private void callSnapToRoadApi(ArrayList<Geoposition> newPath) {
+                // Construct the API request URL
+                String apiKey = BuildConfig.CREDENTIALS_KEY;
+                String endpoint = "https://dev.virtualearth.net/REST/v1/Routes/SnapToRoad";
+                StringBuilder waypoints = new StringBuilder();
+                for (int i = 0; i < newPath.size(); i++) {
+                    Geoposition g = newPath.get(i);
+                    waypoints.append(g.getLatitude()).append(",").append(g.getLongitude());
+                    if (i < newPath.size() - 1) {
+                        waypoints.append(";");
+                    }
+                }
+
+                String url = endpoint + "?points=" + waypoints.toString() + "&interpolate=true&key=" + apiKey;
+
+                System.err.println("Snap to road url: " + url);
+
+                new AsyncTask<Void, Void, String>() {
+                    @Override
+                    protected String doInBackground(Void... voids) {
+                        OkHttpClient client = new OkHttpClient();
+                        Request request = new Request.Builder()
+                                .url(url)
+                                .build();
+                        try {
+                            okhttp3.Response response = client.newCall(request).execute();
+                            if (response.isSuccessful()) {
+                                return response.body().string();
+                            } else {
+                                System.err.println("Snap to road API error after response received..");
+                                // Handle API error
+                                return null;
+                            }
+                        } catch (IOException e) {
+                            System.err.println("Snap to road API failed..");
+                            throw new RuntimeException(e);
+                        }
+                    }
+                };
             }
 
             @Override
