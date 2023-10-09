@@ -204,6 +204,9 @@ public class MapViewModel extends ViewModel {
             }
 
             private void parseStreetsAndUpdateTraffic(JsonNode jsonNode, Geopath geopath) {
+                boolean isFirstNode = true;
+                Geoposition firstGeoposition = null;
+                Geoposition lastGeoposition = null;
                 try {
                     JsonNode itineraryItemsArray = jsonNode
                             .path("resourceSets")
@@ -237,6 +240,11 @@ public class MapViewModel extends ViewModel {
                                 double longitude = maneuverPointNode.path("coordinates").get(1).asDouble();
                                 System.err.println("Coordinates: Latitude " + latitude + ", Longitude " + longitude);
                                 Geoposition streetGeoposition = new Geoposition(latitude, longitude);
+                                if (isFirstNode) {
+                                    firstGeoposition = streetGeoposition;
+                                    isFirstNode = false;
+                                }
+                                lastGeoposition = streetGeoposition;
                                 boolean thereIsCollision = trafficManager.putAndCheckCollision(new Street(firstName, streetGeoposition), geopath);
                                 if (thereIsCollision) {
                                     newCollision.setValue(streetGeoposition);
@@ -244,6 +252,10 @@ public class MapViewModel extends ViewModel {
                             }
                         }
                     }
+                    newDeparturePoint.postValue(firstGeoposition);
+                    newArrivalPoint.postValue(lastGeoposition);
+                    System.err.println("New departure point: " + firstGeoposition.getLatitude() + ", " + firstGeoposition.getLongitude());
+                    System.err.println("New arrival point: " + lastGeoposition.getLatitude() + ", " + lastGeoposition.getLongitude());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

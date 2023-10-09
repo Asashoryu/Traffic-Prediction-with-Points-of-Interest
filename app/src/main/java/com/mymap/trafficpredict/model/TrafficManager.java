@@ -1,7 +1,6 @@
 package com.mymap.trafficpredict.model;
 
 import com.microsoft.maps.Geopath;
-import com.microsoft.maps.Geoposition;
 
 import java.util.ArrayList;
 import java.util.HashMap;

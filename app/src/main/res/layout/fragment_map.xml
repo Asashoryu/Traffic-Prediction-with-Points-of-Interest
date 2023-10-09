@@ -20,7 +20,7 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="16dp"
                 android:onClick="@{() -> mapViewModel.calculateRoute()}"
-                android:src="@drawable/ic_add" />
+                android:src="@drawable/baseline_add_24" />
 
         </FrameLayout>
 

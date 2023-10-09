@@ -1,24 +1,29 @@
 package com.mymap.trafficpredict.view;
 
-import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.microsoft.maps.*;
 import com.mymap.trafficpredict.BuildConfig;
+import com.mymap.trafficpredict.R;
 import com.mymap.trafficpredict.databinding.FragmentMapBinding;
 import com.mymap.trafficpredict.viewmodel.MapViewModel;
 
 import com.microsoft.maps.MapRenderMode;
 import com.microsoft.maps.MapView;
 
-import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class MapFragment extends Fragment {
@@ -51,6 +56,10 @@ public class MapFragment extends Fragment {
         observeRoutesUpdates();
         observeTrafficCollisionUpdates();
 
+        // display traffic on the map
+        TrafficFlowMapLayer tfmpl = new TrafficFlowMapLayer();
+        mMapView.getLayers().add(tfmpl);
+
         return fragmentView;
     }
 
@@ -72,27 +81,47 @@ public class MapFragment extends Fragment {
             }
             return false;
         });
-        mMapView.addOnMapHoldingListener((doubleTapEvent) -> {
+        mMapView.addOnMapHoldingListener((longTapEvent) -> {
+            System.err.println("This is the location long-tapped: " + longTapEvent.location.getPosition() + ", " + longTapEvent.position.y);
             if (mapViewModel.newDeparturePoint.getValue() == null) {
-                mapViewModel.newDeparturePoint.setValue(doubleTapEvent.location.getPosition());
+                // if it's the first point, then it's a departure point
+                mapViewModel.newDeparturePoint.setValue(longTapEvent.location.getPosition());
+                displayDeparturePinpoint(longTapEvent.location.getPosition());
             }
             else {
+                // if it's not the first point, then it's the arrival point
+                displayArrivalPinpoint(longTapEvent.location.getPosition());
                 Geoposition departureGeoposition = mapViewModel.newDeparturePoint.getValue();
-                Geoposition arrivalGeoposition = doubleTapEvent.location.getPosition();
+                Geoposition arrivalGeoposition = longTapEvent.location.getPosition();
                 String departure = departureGeoposition.getLatitude() + "," + departureGeoposition.getLongitude();
                 String arrival = arrivalGeoposition.getLatitude() + "," + arrivalGeoposition.getLongitude();
                 mapViewModel.calculateRoute(departure, arrival);
+                // correctDepartureAndArrivalPinsOnMap(mapViewModel.newDeparturePoint.getValue(), mapViewModel.newArrivalPoint.getValue());
                 mapViewModel.newDeparturePoint.setValue(null);
+                mapViewModel.newArrivalPoint.setValue(null);
             }
             return true;
         });
         mMapView.onCreate(savedInstanceState);
     }
+    // method for correcting departure and arrival points according to the accual path provided
+    public void correctDepartureAndArrivalPinsOnMap(Geoposition departure, Geoposition arrival) {
+        int numberOfPins = pinLayer.getElements().size();
+        // remove arrival pin
+        pinLayer.getElements().remove(numberOfPins - 1);
+        // remove departure pin
+        pinLayer.getElements().remove(numberOfPins - 2);
+        // update departure pin
+        displayDeparturePinpoint(departure);
+        // update arrival pin
+        displayArrivalPinpoint(arrival);
+    }
 
     private void startPolylinesLayer() {
         linesLayer = new MapElementLayer();
         mMapView.getLayers().add(linesLayer);
-        startPeriodicalTwinkleOfPaths();
+        // Uncomment to add the twinkling effect in order to distinguish overlapping paths
+        // startPeriodicalTwinkleOfPaths();
     }
 
     private void startPinsLayer() {
@@ -123,15 +152,16 @@ public class MapFragment extends Fragment {
     public void observeTrafficCollisionUpdates() {
         mapViewModel.newCollision.observe(getViewLifecycleOwner(), (geoposition) -> {
             System.err.println("New collision observed successfully..");
+            System.err.println("Here a collision point: " + geoposition.getLatitude() + ", " + geoposition.getLongitude());
             displayTrafficCollision(geoposition);
         });
     }
 
     public void displayTrafficCollision(Geoposition geoposition) {
-        displayPinpoint(geoposition);
+        displayTrafficCollisionPinpoint(geoposition);
     }
 
-    public void displayPinpoint(Geoposition geoposition) {
+    public void displayTrafficCollisionPinpoint(Geoposition geoposition) {
         MapIcon pushpin = new MapIcon();
         pushpin.setLocation(new Geopoint(geoposition));
         pushpin.setTitle("Here collision expected");
@@ -142,7 +172,66 @@ public class MapFragment extends Fragment {
         pushpin.setFlyout(flyout);
 
         pinLayer.getElements().add(pushpin);
+    }
 
+    public Bitmap drawableToBitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        int width = drawable.getIntrinsicWidth();
+        int height = drawable.getIntrinsicHeight();
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
+
+    public void displayDeparturePinpoint(Geoposition geoposition) {
+        MapIcon pushpin = new MapIcon();
+        pushpin.setLocation(new Geopoint(geoposition));
+        pushpin.setTitle("Departure point");
+
+        // Load your custom vector drawable
+        Drawable vectorDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.baseline_location_on_24_start);
+        if (vectorDrawable != null) {
+            // Convert the Drawable to a Bitmap
+            Bitmap pinBitmap = drawableToBitmap(vectorDrawable);
+
+            // Set the Bitmap as the icon for the MapIcon
+            pushpin.setImage(new MapImage((pinBitmap)));
+            //pushpin.setNormalizedAnchorPoint(new PointF(0.5f, 1.0f));  // Center against the bottom of the image
+            pinLayer.getElements().add(pushpin);
+        } else {
+            Log.e("MapFragment", "Failed to load vector drawable");
+        }
+
+    }
+
+
+    public void displayArrivalPinpoint(Geoposition geoposition) {
+        MapIcon pushpin = new MapIcon();
+        pushpin.setLocation(new Geopoint(geoposition));
+        pushpin.setTitle("Arrival point");
+        Drawable vectorDrawable  = AppCompatResources.getDrawable(getContext(), R.drawable.baseline_location_off_24_end);
+        Bitmap pinBitmap = Bitmap.createBitmap(
+                vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(),
+                Bitmap.Config.ARGB_8888
+        );
+
+        // Create a Canvas and draw the vector drawable onto the Bitmap
+        Canvas canvas = new Canvas(pinBitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+
+        // Set the Bitmap as the icon for the MapIcon
+        pushpin.setImage(new MapImage(pinBitmap));
+        pinLayer.getElements().add(pushpin);
     }
 
     public void startPeriodicalTwinkleOfPaths() {
